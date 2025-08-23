@@ -1,0 +1,68 @@
+# Docker Compose configuration
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: stock_data
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d stock_data"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Dagster Webserver
+  dagster:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - DAGSTER_HOME=/opt/dagster/dagster_home
+      - POSTGRES_HOST=postgres
+      - POSTGRES_DB=stock_data
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=admin123
+      - ALPHA_VANTAGE_API_KEY=${ALPHA_VANTAGE_API_KEY:-demo}
+    ports:
+      - "3000:3000"
+    volumes:
+      - dagster_home:/opt/dagster/dagster_home
+      - ./workspace.yaml:/opt/dagster/app/workspace.yaml
+      - ./stock_pipeline:/opt/dagster/app/stock_pipeline
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: dagster-webserver -h 0.0.0.0 -p 3000 -w /opt/dagster/app/workspace.yaml
+
+  # Dagster Daemon (for job execution)
+  dagster-daemon:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - DAGSTER_HOME=/opt/dagster/dagster_home
+      - POSTGRES_HOST=postgres
+      - POSTGRES_DB=stock_data
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=admin123
+      - ALPHA_VANTAGE_API_KEY=${ALPHA_VANTAGE_API_KEY:-demo}
+    volumes:
+      - dagster_home:/opt/dagster/dagster_home
+      - ./workspace.yaml:/opt/dagster/app/workspace.yaml
+      - ./stock_pipeline:/opt/dagster/app/stock_pipeline
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: dagster-daemon run
+
+volumes:
+  postgres_data:
+  dagster_home:
