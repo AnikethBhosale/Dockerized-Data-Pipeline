@@ -7,7 +7,7 @@ services:
     environment:
       POSTGRES_DB: stock_data
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: admin123
+      POSTGRES_PASSWORD: admin
     ports:
       - "5432:5432"
     volumes:
@@ -29,7 +29,7 @@ services:
       - POSTGRES_HOST=postgres
       - POSTGRES_DB=stock_data
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=admin123
+      - POSTGRES_PASSWORD=admin
       - ALPHA_VANTAGE_API_KEY=${ALPHA_VANTAGE_API_KEY:-demo}
     ports:
       - "3000:3000"
@@ -52,7 +52,7 @@ services:
       - POSTGRES_HOST=postgres
       - POSTGRES_DB=stock_data
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=admin123
+      - POSTGRES_PASSWORD=admin
       - ALPHA_VANTAGE_API_KEY=${ALPHA_VANTAGE_API_KEY:-demo}
     volumes:
       - dagster_home:/opt/dagster/dagster_home

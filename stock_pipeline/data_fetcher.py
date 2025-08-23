@@ -44,7 +44,7 @@ class StockDataFetcher:
         if not db_url:
             db_url = (
                 f"postgresql://{os.getenv('POSTGRES_USER', 'postgres')}:"
-                f"{os.getenv('POSTGRES_PASSWORD', 'admin123')}@"
+                f"{os.getenv('POSTGRES_PASSWORD', 'admin')}@"
                 f"{os.getenv('POSTGRES_HOST', 'localhost')}:5432/"
                 f"{os.getenv('POSTGRES_DB', 'stock_data')}"
             )
@@ -322,7 +322,7 @@ def main():
     parser.add_argument(
         '--symbols', 
         type=str, 
-        default='IBM,AAPL,MSFT,GOOGL',
+        default='IBM,MSFT',
         help='Comma-separated list of stock symbols'
     )
     parser.add_argument(

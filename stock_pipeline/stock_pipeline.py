@@ -20,7 +20,7 @@ logger = get_dagster_logger()
 
 class StockDataConfig(Config):
     """Configuration for stock data pipeline"""
-    symbols: list[str] = ["IBM", "AAPL", "MSFT", "GOOGL"]
+    symbols: list[str] = ["IBM", "MSFT"]
     interval: str = "5min"
     api_key: Optional[str] = None
 
@@ -36,7 +36,7 @@ class DatabaseManager:
         try:
             db_url = (
                 f"postgresql://{os.getenv('POSTGRES_USER', 'postgres')}:"
-                f"{os.getenv('POSTGRES_PASSWORD', 'admin123')}@"
+                f"{os.getenv('POSTGRES_PASSWORD', 'admin')}@"
                 f"{os.getenv('POSTGRES_HOST', 'localhost')}:5432/"
                 f"{os.getenv('POSTGRES_DB', 'stock_data')}"
             )
